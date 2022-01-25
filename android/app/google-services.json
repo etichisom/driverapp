@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "174643851036",
+    "project_id": "bulletapp-9b23b",
+    "storage_bucket": "bulletapp-9b23b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:174643851036:android:6dbe5a1a556554673814d9",
+        "android_client_info": {
+          "package_name": "com.example.bulletdriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "174643851036-j7hqqebhm0ovkc9n3a9n0ftgjvr4h2u5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMdLqvSCA1e4wmJ6OLewHsuwJ73b-Yvxc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "174643851036-j7hqqebhm0ovkc9n3a9n0ftgjvr4h2u5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
