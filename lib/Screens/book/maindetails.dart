@@ -53,7 +53,7 @@ class _MaindetailsState extends State<Maindetails> {
                   children: [
                     Icon(Icons.work_outline_sharp),
                     SizedBox(width: 10,),
-                    stext('Up to 5 kg',14,fontWeight: FontWeight.w600),
+                    stext('Up to ${data.packageName}',14,fontWeight: FontWeight.w600),
                   ],
                 ),
               ],
@@ -61,7 +61,7 @@ class _MaindetailsState extends State<Maindetails> {
           ),
           SizedBox(height: 15,),
           concenter('Parcel Details'),
-          radiotile('Food & Beverages'),
+          radiotile(data.packageTypeName),
           radiotile('Riders with Delivery Bags ; Needed to Carry food parcels.'),
          contactile('+7876757765'),
           SizedBox(height: 15,),
@@ -72,6 +72,19 @@ class _MaindetailsState extends State<Maindetails> {
           radiotile('Offline Paid Orders ; Do not ask for Online Payment at any point.'),
           //SizedBox(height: 5,),
           radiotile('Riders with Delivery Bags ; Needed to Carry food parcels.'),
+          SizedBox(height: 15,),
+          ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: data.orderRequestDrop.length,
+              itemBuilder:(context,index){
+              return Column(
+                children: [
+                  locate(index, 'Delivery Location'),
+                ],
+              );
+              })
+
         ],
       )
     );

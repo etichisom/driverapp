@@ -53,7 +53,7 @@ class _BookdState extends State<Bookd> {
                         topRight:  Radius.circular(30)
                       )
                     ),
-                    height:size.height ,
+                    height:1000 ,
                     width:size.width ,
                     child: Maindetails(widget.data,scrollController),
                   ),
