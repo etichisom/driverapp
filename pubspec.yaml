@@ -30,6 +30,7 @@ dependencies:
   flutter:
     sdk: flutter
   google_fonts:
+  hexcolor: ^2.0.6
   pinput:
   image_picker: ^0.8.4+4
   splashscreen:

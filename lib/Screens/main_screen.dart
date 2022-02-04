@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'book/activebooking.dart';
+
 class MainScreen extends StatefulWidget {
 
 
@@ -132,7 +134,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ),
         body: TabBarView(children: [
           Availbe(),
-          activeWidget(),
+          Activebooking(),
           completedWidget(),
         ]),
         // bottomNavigationBar: MyBottomNavigatonBar(),

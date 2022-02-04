@@ -1,4 +1,5 @@
 import 'package:bullet_pro/Models/rbook.dart';
+import 'package:bullet_pro/Screens/activebook/actbookdetails.dart';
 import 'package:bullet_pro/Screens/book/bookdetails.dart';
 import 'package:bullet_pro/Utils/color.dart';
 import 'package:bullet_pro/component/bookcard.dart';
@@ -8,19 +9,18 @@ import 'package:bullet_pro/theme/apptheme.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 Bookingservices bookingservices= Bookingservices();
-class Maindetails extends StatefulWidget {
- Data data;
+class Maindetails1 extends StatefulWidget {
+
  ScrollController controller;
- Maindetails(this.data,this.controller);
+ Maindetails1(this.controller);
 
   @override
   _MaindetailsState createState() => _MaindetailsState();
 }
 
-class _MaindetailsState extends State<Maindetails> {
+class _MaindetailsState extends State<Maindetails1> {
   @override
   Widget build(BuildContext context) {
-    var data =widget.data;
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -41,11 +41,11 @@ class _MaindetailsState extends State<Maindetails> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                stext(data.requestPaymentsMode, 12),
+                stext(book.data.bookingPaymentsMode, 12),
                 SizedBox(height: 20,),
                 Row(
                   children: [
-                    stext(rupee+data.requestTotalAmount,17,fontWeight: FontWeight.w600),
+                    stext(rupee+book.data.bookingTotalAmount,17,fontWeight: FontWeight.w600),
                     Spacer(),
                     stext('for Delivery', 12),
                   ],
@@ -55,7 +55,7 @@ class _MaindetailsState extends State<Maindetails> {
                   children: [
                     Icon(Icons.work_outline_sharp),
                     SizedBox(width: 10,),
-                    stext('Up to ${data.packageName}',14,fontWeight: FontWeight.w600),
+                    stext('Up to 50',14,fontWeight: FontWeight.w600),
                   ],
                 ),
               ],
@@ -63,31 +63,63 @@ class _MaindetailsState extends State<Maindetails> {
           ),
           SizedBox(height: 15,),
           concenter('Parcel Details'),
-          radiotile(data.packageTypeName),
+          //radiotile(book.data..packageTypeName),
           radiotile('Riders with Delivery Bags ; Needed to Carry food parcels.'),
          contactile('+7876757765'),
           SizedBox(height: 15,),
           locate(1, 'Pickup Location'),
           SizedBox(height: 15,),
-          locateion(data.requestPickupAddress),
+          locateion(book.data.bookingPickupAddress),
           contactile('+7876757765'),
           radiotile('Offline Paid Orders ; Do not ask for Online Payment at any point.'),
           //SizedBox(height: 5,),
           radiotile('Riders with Delivery Bags ; Needed to Carry food parcels.'),
-
+          SizedBox(height: 15,),
+          status('start')==false?dbutton('arrived'):
+          button((){
+            print('yyyyy');
+            bookingservices.Bookarrived(book.data.bookingId).
+            then((value){
+              reset(book.data.bookingId);
+            });
+          },"Arrived",status('arrived')),
+          SizedBox(height: 15,),
+          status('arrived')?button((){
+             bookingservices.Bookpickup(book.data.bookingId).
+             then((value){
+               reset(book.data.bookingId);
+             });
+          },"Pick up",status('pickup')):status('completed')?
+          button((){
+            print('yyyyy');
+            bookingservices.Bookpickup(book.data.bookingId).
+            then((value){
+              reset(book.data.bookingId);
+            });
+          },"Pick up",status('completed'))
+              :dbutton('Pick up'),
           SizedBox(height: 15,),
           locate(2, 'Delivery Location'),
           ListView.builder(
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: data.orderRequestDrop.length,
+            itemCount: book.data.bookingsDrop.length,
               itemBuilder:(context,index){
-              var d = data.orderRequestDrop[index];
+              var d = book.data.bookingsDrop[index];
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  locateion(d.dropAddress),
+                  locateion(d.bookingDropAddress),
                   SizedBox(height: 15,),
+                  status('pickup')?dropbutton((){
+                    bookingservices.dropoff(book.data.bookingId,d.bookingDropId).
+                    then((value){
+                      reset(book.data.bookingId);
+                    });
+                  }, 'Drop off',d.bookingDropStatus.toString().toLowerCase().contains('completed'))
+                      :status('completed')?dropbutton((){
+
+                  }, 'Drop off',status('completed')):SizedBox(),
                 ],
               );
               }),
@@ -182,34 +214,52 @@ class _MaindetailsState extends State<Maindetails> {
     );
   }
 
- Widget button(Function tap, String s) {
+ Widget button(Function tap, String s,bool tapp) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SizedBox(
         height: 50,
         width: double.maxFinite,
-        child: FlatButton(
+        child: RaisedButton(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
-            onPressed: (){},
+            onPressed:tapp?null:tap,
             color:HexColor('#7CFC00'),
             child:stext(s, 16,color: Colors.white,fontWeight: FontWeight.w600)),
       ),
     );
  }
 
-Widget dropbutton(Function ontap, String s) {
+
+  Widget dbutton( String s,) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        height: 50,
+        width: double.maxFinite,
+        child: RaisedButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            onPressed:null,
+            color:HexColor('#7CFC00'),
+            child:stext(s, 16,color: Colors.white,fontWeight: FontWeight.w600)),
+      ),
+    );
+  }
+
+  Widget dropbutton(Function ontap, String s,bool tap) {
   return SizedBox(
     width: 200,
     child: Padding(
       padding: const EdgeInsets.all(8.0),
-      child: FlatButton.icon(
+      child: RaisedButton.icon(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
         color: themeColor,
-            onPressed:ontap,
+            onPressed:tap?null:ontap,
             icon:Icon(Icons.pin_drop,color: Colors.white,), label:stext('Drop off', 14,color: Colors.white)),
     ),
   );
@@ -236,6 +286,7 @@ Widget dropbutton(Function ontap, String s) {
     bookingservices.getbookbid(id)
         .then((value){
       if(value!=null){
+        book=value;
         setState(() {});
       }
     });

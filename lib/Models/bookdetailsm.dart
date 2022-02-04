@@ -1,19 +1,14 @@
-class Bookstat {
+class Bookdetail {
   bool status;
   String message;
-  List<Data> data;
+  Datas data;
 
-  Bookstat({this.status, this.message, this.data});
+  Bookdetail({this.status, this.message, this.data});
 
-  Bookstat.fromJson(Map<String, dynamic> json) {
+  Bookdetail.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-    if (json['data'] != null) {
-      data = new List<Data>();
-      json['data'].forEach((v) {
-        data.add(new Data.fromJson(v));
-      });
-    }
+    data = json['data'] != null ? new Datas.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -21,13 +16,13 @@ class Bookstat {
     data['status'] = this.status;
     data['message'] = this.message;
     if (this.data != null) {
-      data['data'] = this.data.map((v) => v.toJson()).toList();
+      data['data'] = this.data.toJson();
     }
     return data;
   }
 }
 
-class Data {
+class Datas {
   String bookingId;
   String bookingOrderId;
   String bookingCustomerId;
@@ -36,15 +31,20 @@ class Data {
   String bookingTimeText;
   String bookingTotalAmount;
   String bookingPaymentsMode;
+  String bookingRequestId;
   String bookingCreateAt;
+  BookingOtherDetails bookingOtherDetails;
   String bookingPickupCity;
   String bookingStatus;
   String bookingDisplayStatus;
   List<BookingStatusHistory> bookingStatusHistory;
   String bookingUpdateAt;
+  String customerFullName;
+  String customerDeviceToken;
+  String driverFullName;
   List<BookingsDrop> bookingsDrop;
 
-  Data(
+  Datas(
       {this.bookingId,
         this.bookingOrderId,
         this.bookingCustomerId,
@@ -53,15 +53,20 @@ class Data {
         this.bookingTimeText,
         this.bookingTotalAmount,
         this.bookingPaymentsMode,
+        this.bookingRequestId,
         this.bookingCreateAt,
+        this.bookingOtherDetails,
         this.bookingPickupCity,
         this.bookingStatus,
         this.bookingDisplayStatus,
         this.bookingStatusHistory,
         this.bookingUpdateAt,
+        this.customerFullName,
+        this.customerDeviceToken,
+        this.driverFullName,
         this.bookingsDrop});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  Datas.fromJson(Map<String, dynamic> json) {
     bookingId = json['booking_id'];
     bookingOrderId = json['booking_order_id'];
     bookingCustomerId = json['booking_customer_id'];
@@ -70,7 +75,11 @@ class Data {
     bookingTimeText = json['booking_time_text'];
     bookingTotalAmount = json['booking_total_amount'];
     bookingPaymentsMode = json['booking_payments_mode'];
+    bookingRequestId = json['booking_request_id'];
     bookingCreateAt = json['booking_create_at'];
+    bookingOtherDetails = json['booking_other_details'] != null
+        ? new BookingOtherDetails.fromJson(json['booking_other_details'])
+        : null;
     bookingPickupCity = json['booking_pickup_city'];
     bookingStatus = json['booking_status'];
     bookingDisplayStatus = json['booking_display_status'];
@@ -81,6 +90,9 @@ class Data {
       });
     }
     bookingUpdateAt = json['booking_update_at'];
+    customerFullName = json['customer_full_name'];
+    customerDeviceToken = json['customer_device_token'];
+    driverFullName = json['driver_full_name'];
     if (json['bookings_drop'] != null) {
       bookingsDrop = new List<BookingsDrop>();
       json['bookings_drop'].forEach((v) {
@@ -99,7 +111,11 @@ class Data {
     data['booking_time_text'] = this.bookingTimeText;
     data['booking_total_amount'] = this.bookingTotalAmount;
     data['booking_payments_mode'] = this.bookingPaymentsMode;
+    data['booking_request_id'] = this.bookingRequestId;
     data['booking_create_at'] = this.bookingCreateAt;
+    if (this.bookingOtherDetails != null) {
+      data['booking_other_details'] = this.bookingOtherDetails.toJson();
+    }
     data['booking_pickup_city'] = this.bookingPickupCity;
     data['booking_status'] = this.bookingStatus;
     data['booking_display_status'] = this.bookingDisplayStatus;
@@ -108,9 +124,34 @@ class Data {
           this.bookingStatusHistory.map((v) => v.toJson()).toList();
     }
     data['booking_update_at'] = this.bookingUpdateAt;
+    data['customer_full_name'] = this.customerFullName;
+    data['customer_device_token'] = this.customerDeviceToken;
+    data['driver_full_name'] = this.driverFullName;
     if (this.bookingsDrop != null) {
       data['bookings_drop'] = this.bookingsDrop.map((v) => v.toJson()).toList();
     }
+    return data;
+  }
+}
+
+class BookingOtherDetails {
+  bool withBag;
+  bool recipientsSms;
+  bool urgentOrder;
+
+  BookingOtherDetails({this.withBag, this.recipientsSms, this.urgentOrder});
+
+  BookingOtherDetails.fromJson(Map<String, dynamic> json) {
+    withBag = json['with_bag'];
+    recipientsSms = json['recipients_sms'];
+    urgentOrder = json['urgent_order'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['with_bag'] = this.withBag;
+    data['recipients_sms'] = this.recipientsSms;
+    data['urgent_order'] = this.urgentOrder;
     return data;
   }
 }
