@@ -1,14 +1,21 @@
 import 'package:bullet_pro/Screens/avialable_book.dart';
 import 'package:bullet_pro/Screens/book/combook.dart';
+import 'package:bullet_pro/Screens/book/profilescreen.dart';
+import 'package:bullet_pro/Screens/verify_otp_screen.dart';
 import 'package:bullet_pro/Utils/color.dart';
 import 'package:bullet_pro/bloc/authbloc.dart';
 import 'package:bullet_pro/bloc/bookbloc.dart';
+import 'package:bullet_pro/services/infoservice.dart';
+import 'package:bullet_pro/services/locationservices.dart';
+import 'package:bullet_pro/theme/apptheme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:popup_menu/popup_menu.dart';
 import 'package:provider/provider.dart';
 
 import 'book/activebooking.dart';
+import 'book/tollpick.dart';
 
 class MainScreen extends StatefulWidget {
 
@@ -18,12 +25,18 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
+  void stateChanged(bool isShow) {
+    print('menu is ${ isShow ? 'showing': 'closed' }');
+  }
+  bool load  = false;
+  start(){setState(() {load=true;});}
+  stop(){setState(() {load=false;});}
   TabController _controller;
-
   double screenHeight = 0;
   double screenWidth = 0;
   Bookbloc bookbloc;
   Authbloc authbloc;
+
   @override
   void initState() {
     _controller = TabController(length: 3, vsync: this);
@@ -36,7 +49,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         bookbloc.getrecentbook(authbloc.user.data.driverId);
         print(event);
       });
-
+      Infosettings().Getdetail(authbloc.user.data.driverId).
+      then((value) {
+        if(value!=null){
+          setState(() {
+            driverd=value;
+          });
+        }
+      });
     });
 
   }
@@ -126,10 +146,46 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     bookbloc = Provider.of<Bookbloc>(context);
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         appBar: AppBar(
+          actions: [
+           driverd==null?SizedBox():PopupMenuButton(
+              icon: Icon(Icons.online_prediction),
+              offset: Offset(0, 50),
+              shape:  TooltipShape(),
+              onSelected: (v){
+                print(v);
+                Locationservices().updatestatus(authbloc.user.data.driverId, v)
+                    .then((value){
+                  Infosettings().Getdetail(authbloc.user.data.driverId).
+                  then((value) {
+                    if(value!=null){
+                      setState(() {
+                        driverd=value;
+                      });
+                    }
+                  });
+                });
+              },
+              itemBuilder: (_) => <PopupMenuEntry>[
+                PopupMenuItem(
+                  value: 'online',
+                    child: ListTile(
+                      leading: const Icon(Icons.work),
+                      title: const Text("I'm working"),
+                    )),
+                PopupMenuItem(
+                  value: 'offline',
+                    child: ListTile(
+                      leading: const Icon(Icons.work_off),
+                      title: const Text("I'm not working"),
+                    )),
+              ],
+            ),
+          ],
           automaticallyImplyLeading: false,
           backgroundColor: themeColor,
           title: Text("Orders"),
@@ -151,8 +207,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           ),
         ),
         body: TabBarView(children: [
-          Availbe(),
-          Activebooking(),
+         driverd==null?Availbe():driverd.data.driverLoginStatus.toString()=='0'?
+          avialbleWidget():Availbe(),
+          driverd==null?Activebooking():driverd.data.driverLoginStatus.toString()=='0'?
+          avialbleWidget():Activebooking(),
           Combooking(),
         ]),
         // bottomNavigationBar: MyBottomNavigatonBar(),
@@ -191,13 +249,47 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   vertical: 20,
                 ),
                 child: Text(
-                  "3 Orders avialable",
+                  "You are away so you cannot see available order",
                   style: GoogleFonts.roboto(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
+              RaisedButton(
+                color:Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)
+                ),
+                onPressed:(){
+                  if(load==false){
+                    start();
+                    Locationservices().updatestatus(authbloc.user.data.driverId, "online")
+                        .then((value){
+                      Infosettings().Getdetail(authbloc.user.data.driverId).
+                      then((value) {
+                        stop();
+                        if(value!=null){
+                          setState(() {
+                            driverd=value;
+                          });
+                        }
+                      });
+                    });
+                  }
+
+              },
+                child:load?SizedBox(
+                  width: 20,
+                    height: 20,
+                    child: progress()):Text(
+                  "Resume work",
+                  style: GoogleFonts.roboto(
+                    fontSize: 13,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),),
             ],
           ),
         ),
@@ -205,195 +297,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget activeWidget() {
-    return ListView(
-      children: [
-        Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(
-                vertical: 30,
-              ),
-              height: screenHeight / 3.5,
-              width: screenWidth / 1.03,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(
-                    7,
-                  ),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 0.100,
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: screenHeight / 20,
-                    width: screenWidth,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(
-                            7,
-                          ),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 0.100,
-                          )
-                        ]),
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                "₹567",
-                                style: GoogleFonts.roboto(
-                                  textStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              Icon(
-                                Icons.list_alt_rounded,
-                              ),
-                            ],
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            height: screenHeight / 28,
-                            width: screenWidth / 5,
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(
-                                  25,
-                                ),
-                              ),
-                            ),
-                            child: Text(
-                              "#6565856",
-                              style: GoogleFonts.roboto(
-                                  textStyle: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              )),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    child: Text(
-                      "Parcel is on the way",
-                      style: GoogleFonts.roboto(
-                        color: textColor,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(
-                      top: 20,
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.circle,
-                              color: textColor,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(
-                                left: 10,
-                              ),
-                              width: MediaQuery.of(context).size.width - 100,
-                              child: const Text(
-                                "A-56 Sector 63 Rd, A Block, Sector 65, Noida, Uttar Pradesh 239867, India.",
-                                style: TextStyle(
-                                  fontFamily: "SEGOEUI",
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                        Container(
-                          height: 20,
-                          color: Colors.grey,
-                          width: 2,
-                          margin: const EdgeInsets.only(
-                            left: 24,
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.circle_outlined,
-                              color: textColor,
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(
-                                left: 10,
-                              ),
-                              width: MediaQuery.of(context).size.width - 100,
-                              child: const Text(
-                                "A-56 Sector 63 Rd, A Block, Sector 65, Noida, Uttar Pradesh 239867, India.",
-                                style: TextStyle(
-                                  fontFamily: "SEGOEUI",
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      vertical: 20,
-                      horizontal: 10,
-                    ),
-                    alignment: Alignment.bottomRight,
-                    width: screenWidth,
-                    child: Text(
-                      "Arrive  from 1:26 PM  to 2:30 PM",
-                      style: GoogleFonts.roboto(
-                        textStyle: TextStyle(
-                          color: textColor,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
+
 
   Widget completedWidget() {
     return ListView(

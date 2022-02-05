@@ -1,45 +1,22 @@
 import 'dart:convert';
-import 'package:bullet_pro/Models/driverd.dart';
-import 'package:bullet_pro/Models/help.dart';
-import 'package:bullet_pro/Models/incomem.dart';
+
+import 'package:bullet_pro/Screens/bottom_navigation_bar_screen.dart';
 import 'package:bullet_pro/services/authservice.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart';
 
-class Infosettings{
+class Locationservices{
 
-  Future<Helpm> Gethelp()async{
-    try{
-      var url = Uri.parse(baseurl+'/helpquestion/for_driver');
-      var res = await get(url,
-          headers: {
-            "Content-Type": "application/json",
-            'x-api-key':key
-          });
-      var decode = jsonDecode(res.body);
-      print(decode);
-      if(res.statusCode==200){
-        if(decode['status']==true){
-          var p = Helpm.fromJson(decode);
-          return p;
-        }else{
-
-        }
-      }
-    }catch(e){
-      //EasyLoading.dismiss();
-      print(e);
-    }
-  }
-
-
-  Future<Driverd> Getdetail(String id)async{
+  Future<bool> updatestatus(String id,String status)async{
     var map = {
-      "driver_id":id
+      "driver_id":id,
+      "driver_status":status,
+      "driver_latitude":position.latitude,
+      "driver_longitude":position.longitude
     };
     var data = jsonEncode(map);
     try{
-      var url = Uri.parse(baseurl+'/driver/details');
+      var url = Uri.parse(baseurl+'/driver/online_offline');
       var res = await post(url,
           body:data,
           headers: {
@@ -48,10 +25,9 @@ class Infosettings{
           });
       var decode = jsonDecode(res.body);
       print(decode);
+      EasyLoading.showToast(decode['message']);
       if(res.statusCode==200){
         if(decode['status']==true){
-          var p = Driverd.fromJson(decode);
-          return p;
         }else{
 
         }
@@ -64,13 +40,15 @@ class Infosettings{
 
 
 
-  Future<Incomem> getincom(String id)async{
+   updatelocation(String id,String status)async{
     var map = {
-      "driver_id":id
+      "driver_id":"1",
+      "driver_latitude":"123123.12312321",
+      "driver_longitude":"123123"
     };
     var data = jsonEncode(map);
     try{
-      var url = Uri.parse(baseurl+'/report/income_reports');
+      var url = Uri.parse(baseurl+'/driver/updatelocation');
       var res = await post(url,
           body:data,
           headers: {
@@ -79,10 +57,9 @@ class Infosettings{
           });
       var decode = jsonDecode(res.body);
       print(decode);
+      EasyLoading.showToast(decode['message']);
       if(res.statusCode==200){
         if(decode['status']==true){
-          var p = Incomem.fromJson(decode);
-          return p;
         }else{
 
         }

@@ -5,7 +5,9 @@ import 'package:bullet_pro/Screens/account_screen.dart';
 import 'package:bullet_pro/Screens/user_chat_screen.dart';
 import 'package:bullet_pro/Utils/color.dart';
 import 'package:flutter/material.dart';
-
+import 'package:geolocator/geolocator.dart';
+Position position = Position(longitude:23123213123 , latitude:3131313213 ,
+accuracy:1 ,altitude:1 ,speed:1,speedAccuracy:1 ,heading:1 ,timestamp:DateTime.now()  );
 class MyBottomNavigatonBar extends StatefulWidget {
 
 
@@ -163,5 +165,25 @@ class _MyBottomNavigatonBarState extends State<MyBottomNavigatonBar> {
         ),
       ),
     );
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+   locate();
+  }
+
+  void locate() async{
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    Geolocator.getPositionStream().listen((event) {
+      position=event;
+      print(event.latitude);
+    });
   }
 }
