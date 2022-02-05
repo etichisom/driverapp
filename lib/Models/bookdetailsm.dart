@@ -229,9 +229,9 @@ class BookingsDrop {
   String bookingDropTimeText;
   String bookingDropDistanceText;
   String bookingDropCity;
-  Null bookingDropStatus;
-  Null bookingDropDisplayStatus;
-  Null bookingDropStatusHistory;
+  String bookingDropStatus;
+  String bookingDropDisplayStatus;
+  String bookingDropStatusHistory;
   String bookingDropId;
 
   BookingsDrop(
