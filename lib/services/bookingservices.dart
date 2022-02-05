@@ -42,9 +42,38 @@ class Bookingservices{
     }
   }
   Future<Bookstat> activeBook(String uid)async{
-
     try{
       var url = Uri.parse(baseurl+'/booking/driver_active_booking');
+      var map = {
+        "driver_id":uid
+      };
+      var data = jsonEncode(map);
+      var res = await post(url,
+          body:data,
+          headers: {
+            "Content-Type": "application/json",
+            'x-api-key':key
+          });
+      var decode = jsonDecode(res.body);
+      print(decode);
+      if(res.statusCode==200){
+        if(decode['status']==true){
+          var p = Bookstat.fromJson(decode);
+          return p;
+        }else{
+
+        }
+      }
+      print(res.body);
+    }catch(e){
+      //EasyLoading.dismiss();
+      print(e);
+    }
+  }
+
+  Future<Bookstat> comBook(String uid)async{
+    try{
+      var url = Uri.parse(baseurl+'/booking/driver_complete_booking');
       var map = {
         "driver_id":uid
       };
@@ -291,7 +320,7 @@ class Bookingservices{
 
   Future<Bookdetail> getbookbid(String bid)async{
     try{
-      var url = Uri.parse(baseurl+'/booking/booking_details_for_customer');
+      var url = Uri.parse(baseurl+'/booking/booking_details_for_driver');
       var map = {
         "booking_id":bid
       };

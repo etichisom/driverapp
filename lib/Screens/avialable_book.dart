@@ -12,7 +12,7 @@ class Availbe extends StatefulWidget {
   _AvailbeState createState() => _AvailbeState();
 }
 
-class _AvailbeState extends State<Availbe> {
+class _AvailbeState extends State<Availbe>with WidgetsBindingObserver {
   Bookbloc bookbloc;
   Authbloc authbloc;
   @override
@@ -20,12 +20,20 @@ class _AvailbeState extends State<Availbe> {
     bookbloc = Provider.of<Bookbloc>(context);
     authbloc = Provider.of<Authbloc>(context);
     return Scaffold(
-      body:bookbloc.rbook==null?Center(child: CircularProgressIndicator()):ListView.builder(
-        itemCount:bookbloc.rbook.data.length,
-          itemBuilder:(context,index){
-          var data = bookbloc.rbook.data[index];
-         return bookcard(data, context);
-      } ),
+      body:bookbloc.rbook==null?Center(child: CircularProgressIndicator()):
+      RefreshIndicator(
+        onRefresh: ()async{
+          print('knjkn');
+          await bookbloc.getrecentbook(authbloc.user.data.driverId);
+          return true;
+        },
+        child: ListView.builder(
+          itemCount:bookbloc.rbook.data.length,
+            itemBuilder:(context,index){
+            var data = bookbloc.rbook.data[index];
+           return bookcard(data, context);
+        } ),
+      ),
     );
   }
   @override
@@ -33,11 +41,19 @@ class _AvailbeState extends State<Availbe> {
     // TODO: implement initState
     super.initState();
  Future.delayed(Duration(milliseconds: 500),(){
-   bookbloc.getactivebook(authbloc.user.data.driverId);
+   bookbloc.getrecentbook(authbloc.user.data.driverId);
   // print(authbloc.user);
  });
   }
 
-
+@override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // TODO: implement didChangeAppLifecycleState
+  if(state==AppLifecycleState.resumed){
+    bookbloc.getrecentbook(authbloc.user.data.driverId);
+    bookbloc.getactivebook(authbloc.user.data.driverId);
+  }
+    super.didChangeAppLifecycleState(state);
+  }
 }
 

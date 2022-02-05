@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 
 import 'package:bullet_pro/Models/driverm.dart';
@@ -17,19 +18,18 @@ class Authservice{
 
 
   Future<bool> createaccount ({String number,String
-  name,String type,String token,String fname,String lname})async{
+  name,String type,String token,String fname,String lname,Uint8List image})async{
     print(ktoken);
     try{
-      var url = Uri.parse(baseurl+'/driver/checkdriver');
+      var url = Uri.parse(baseurl+'/driver/signup');
       var map = {
         "driver_region":"2",
-        "driver_mobile":"08103150035",
+        "driver_mobile":number,
         "driver_device_token":ktoken,
         "driver_firstname":fname,
         "driver_lstname":lname,
-        "driver_image":"base64 image",
+        "driver_image":image,
         "driver_employeetype":type
-
       };
       var data = jsonEncode(map);
       var res = await post(url,
@@ -41,10 +41,10 @@ class Authservice{
       print('yhhh');
       print(res.body);
       var decode = jsonDecode(res.body);
+      EasyLoading.showToast(decode['message']);
       if(res.statusCode==200){
         if(decode['status']==true){
-          if(decode['is_exist']==0){
-            //EasyLoading.showSuccess(decode['message']);
+          if(decode['is_exists']==0){
             return true;
           }else{
            // EasyLoading.showError(decode['message']);

@@ -6,14 +6,14 @@ import 'package:bullet_pro/component/bookcard2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class Activebooking extends StatefulWidget {
+class Combooking extends StatefulWidget {
 
 
   @override
   _AvailbeState createState() => _AvailbeState();
 }
 
-class _AvailbeState extends State<Activebooking> {
+class _AvailbeState extends State<Combooking> {
   Bookbloc bookbloc;
   Authbloc authbloc;
   @override
@@ -21,16 +21,16 @@ class _AvailbeState extends State<Activebooking> {
     bookbloc = Provider.of<Bookbloc>(context);
     authbloc = Provider.of<Authbloc>(context);
     return Scaffold(
-      body:bookbloc.bookstat==null?Center(child: CircularProgressIndicator()):
+      body:bookbloc.comstat==null?Center(child: CircularProgressIndicator()):
       RefreshIndicator(
         onRefresh: ()async{
-          await bookbloc.getactivebook(authbloc.user.data.driverId);
+          await bookbloc.getcompbook(authbloc.user.data.driverId);
           return true;
         },
         child: ListView.builder(
-            itemCount:bookbloc.bookstat.data.length,
+            itemCount:bookbloc.comstat.data.length,
             itemBuilder:(context,index){
-              var data = bookbloc.bookstat.data[index];
+              var data = bookbloc.comstat.data[index];
               return bookcard2(data, context);
             } ),
       ),
@@ -41,7 +41,7 @@ class _AvailbeState extends State<Activebooking> {
     // TODO: implement initState
     super.initState();
     Future.delayed(Duration(milliseconds: 500),(){
-      bookbloc.getactivebook(authbloc.user.data.driverId);
+      bookbloc.getcompbook(authbloc.user.data.driverId);
       // print(authbloc.user);
     });
   }

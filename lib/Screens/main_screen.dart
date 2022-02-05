@@ -1,8 +1,12 @@
 import 'package:bullet_pro/Screens/avialable_book.dart';
+import 'package:bullet_pro/Screens/book/combook.dart';
 import 'package:bullet_pro/Utils/color.dart';
+import 'package:bullet_pro/bloc/authbloc.dart';
+import 'package:bullet_pro/bloc/bookbloc.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import 'book/activebooking.dart';
 
@@ -18,11 +22,23 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   double screenHeight = 0;
   double screenWidth = 0;
+  Bookbloc bookbloc;
+  Authbloc authbloc;
   @override
   void initState() {
     _controller = TabController(length: 3, vsync: this);
     // TODO: implement initState
     super.initState();
+    Future.delayed(Duration(milliseconds: 500),(){
+      //FirebaseMessaging.;
+      FirebaseMessaging.onMessage.listen((event) {
+        bookbloc.getactivebook(authbloc.user.data.driverId);
+        bookbloc.getrecentbook(authbloc.user.data.driverId);
+        print(event);
+      });
+
+    });
+
   }
 
   TabBar _tabBar = TabBar(
@@ -106,6 +122,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       ]);
   @override
   Widget build(BuildContext context) {
+    authbloc=Provider.of<Authbloc>(context);
+    bookbloc = Provider.of<Bookbloc>(context);
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return DefaultTabController(
@@ -135,7 +153,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         body: TabBarView(children: [
           Availbe(),
           Activebooking(),
-          completedWidget(),
+          Combooking(),
         ]),
         // bottomNavigationBar: MyBottomNavigatonBar(),
       ),

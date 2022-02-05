@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:bullet_pro/Screens/address_proof_screen.dart';
+import 'package:bullet_pro/Screens/verify_otp_screen.dart';
 import 'package:bullet_pro/Utils/color.dart';
+import 'package:bullet_pro/Utils/nav.dart';
 import 'package:bullet_pro/services/authservice.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,6 +23,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   double screenHeight = 0;
   double screenWidth = 0;
   int index = 0;
+  var path;
   List jobtype = ["full_time","part_time"];
   bool apicall =false;
   start(){setState(() {apicall=true;});}
@@ -420,7 +422,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ),
                 ),
               ),
-              child: Container(
+              child:apicall?progress():Container(
                 margin: const EdgeInsets.only(
                   right: 10,
                 ),
@@ -477,10 +479,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   void pickimage() async{
-
-    //String base64Image = base64Encode(image.readAsBytes());
-    //image.readAsBytes()
-
+   var image =  await ImagePicker().pickImage(source: ImageSource.gallery);
+      path = await image.readAsBytes();
+      print(path);
 
   }
 
@@ -497,6 +498,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
         lname:lname.text.trim() ,
       ).catchError((e){
         stop();
+      }).then((value){
+        print(value);
+        stop();
+        if(value==true){
+          nav(VerifyOTP(), context);
+        }
       });
     }else{
       print(key.currentState.validate());

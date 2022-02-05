@@ -49,6 +49,12 @@ class _BookdState extends State<Abookd> {
         child: Scaffold(
           body:book==null?Center(child: CupertinoActivityIndicator()):Stack(
             children: [
+              MapPolyLineDraw(
+                mapZoom:14.4746,
+                apiKey:"AIzaSyC44N6yERgjg8AM_UOznKlflcEZWYE8tro",
+                firstPoint: MapPoint(double.parse(book.data.bookingPickupLatitude), double.parse(book.data.bookingPickupLongitude)),
+                secondPoint: MapPoint(double.parse(book.data.bookingsDrop.first.bookingDropLatitude), double.parse(book.data.bookingsDrop.first.bookingDropLongitude)),
+              ),
               DraggableScrollableSheet(
                 initialChildSize: 0.30,
                 minChildSize: 0.17,

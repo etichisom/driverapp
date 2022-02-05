@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:bullet_pro/Models/bookdetailsm.dart';
 import 'package:bullet_pro/Screens/activebook/actbookdetails.dart';
 import 'package:bullet_pro/Screens/book/maindetails.dart';
 import 'package:bullet_pro/Utils/color.dart';
