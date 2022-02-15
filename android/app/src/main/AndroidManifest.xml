@@ -7,8 +7,8 @@
     <uses-permission  android:name="android.permission.INTERNET"  />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
    <application
-        android:label="bullet_pro"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Bullet Partner"
+        android:icon="@mipmap/launcher_icon">
        <meta-data android:name="com.google.android.geo.API_KEY"
            android:value="AIzaSyAyRY9zVqzDFo8Qc2puq8T6gYiTARTdnNo"/>
        <activity

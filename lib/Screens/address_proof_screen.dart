@@ -1,8 +1,10 @@
 import 'package:bullet_pro/Screens/bottom_navigation_bar_screen.dart';
 import 'package:bullet_pro/Screens/main_screen.dart';
 import 'package:bullet_pro/Utils/color.dart';
+import 'package:bullet_pro/bloc/authbloc.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class AddressProof extends StatefulWidget {
 
@@ -15,8 +17,16 @@ class _AddressProofState extends State<AddressProof> {
   bool isChecked = false;
   double screenHeight = 0;
   double screenWidth = 0;
+  var path;
+  var path2;
+  Authbloc authbloc;
+  bool apicall =false;
+  start(){setState(() {apicall=true;});}
+  stop(){setState(() {apicall=false;});}
+  TextEditingController number = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    authbloc=Provider.of<Authbloc>(context);
     Color getColor(Set<MaterialState> states) {
       const Set<MaterialState> interactiveStates = <MaterialState>{
         MaterialState.pressed,

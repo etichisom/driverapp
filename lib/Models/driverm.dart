@@ -8,7 +8,7 @@ class Userd {
   Userd(
       {this.status, this.message, this.data, this.isDocument, this.isProfile});
 
-  Userd.fromJson(Map<String, dynamic> json) {
+  Userd.fromJson(Map<dynamic, dynamic> json) {
     status = json['status'];
     message = json['message'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
@@ -16,7 +16,7 @@ class Userd {
     isProfile = json['is_profile'];
   }
 
-  Map<String, dynamic> toJson() {
+  Map<dynamic, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['status'] = this.status;
     data['message'] = this.message;
@@ -87,7 +87,7 @@ class Data {
         this.driverLatitude,
         this.driverLongitude});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  Data.fromJson(Map<dynamic, dynamic> json) {
     driverId = json['driver_id'];
     driverFullName = json['driver_full_name'];
     driverUsername = json['driver_username'];
@@ -117,7 +117,7 @@ class Data {
     driverLongitude = json['driver_longitude'];
   }
 
-  Map<String, dynamic> toJson() {
+  Map<dynamic, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['driver_id'] = this.driverId;
     data['driver_full_name'] = this.driverFullName;

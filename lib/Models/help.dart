@@ -33,13 +33,15 @@ class Data {
   String helpDescription;
   String helpCreateAt;
   String helpImage;
+  String helpShortDescription;
 
   Data(
       {this.helpId,
         this.helpTitle,
         this.helpDescription,
         this.helpCreateAt,
-        this.helpImage});
+        this.helpImage,
+        this.helpShortDescription});
 
   Data.fromJson(Map<String, dynamic> json) {
     helpId = json['help_id'];
@@ -47,6 +49,7 @@ class Data {
     helpDescription = json['help_description'];
     helpCreateAt = json['help_create_at'];
     helpImage = json['help_image'];
+    helpShortDescription = json['help_short_description'];
   }
 
   Map<String, dynamic> toJson() {
@@ -56,6 +59,7 @@ class Data {
     data['help_description'] = this.helpDescription;
     data['help_create_at'] = this.helpCreateAt;
     data['help_image'] = this.helpImage;
+    data['help_short_description'] = this.helpShortDescription;
     return data;
   }
 }

@@ -1,6 +1,14 @@
+import 'dart:convert';
+
+import 'package:bullet_pro/Screens/verify_otp_screen.dart';
 import 'package:bullet_pro/Utils/color.dart';
+import 'package:bullet_pro/bloc/authbloc.dart';
+import 'package:bullet_pro/services/detailservices.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class APScreen extends StatefulWidget {
 
@@ -12,8 +20,16 @@ class APScreen extends StatefulWidget {
 class _APScreenState extends State<APScreen> {
   double screenHeight = 0;
   double screenWidth = 0;
+  var path;
+  var path2;
+  Authbloc authbloc;
+  bool apicall =false;
+  start(){setState(() {apicall=true;});}
+  stop(){setState(() {apicall=false;});}
+  TextEditingController number = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    authbloc=Provider.of<Authbloc>(context);
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     var _value;
@@ -49,6 +65,7 @@ class _APScreenState extends State<APScreen> {
                 ),
                 height: 50,
                 child: TextField(
+                  controller: number,
                   decoration: InputDecoration(
                     labelText: "Address*",
                     hintText: "Address",
@@ -74,9 +91,9 @@ class _APScreenState extends State<APScreen> {
                     children: [
                       ListTile(
                         leading: Radio(
-                          value: () {},
-                          groupValue: _value,
-                          onChanged: _value,
+                          value: path==null?false:true,
+                          groupValue:true,
+                          //onChanged: _value,
                           activeColor: themeColor,
                         ),
                         title: Text(
@@ -92,16 +109,17 @@ class _APScreenState extends State<APScreen> {
                           icon: Icon(
                             Icons.camera_alt,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            pickimage();
+                          },
                         ),
                         minLeadingWidth: 0,
                       ),
                       Divider(),
                       ListTile(
                         leading: Radio(
-                          value: () {},
-                          groupValue: _value,
-                          onChanged: _value,
+                          value: path2==null?false:true,
+                          groupValue:true,
                           activeColor: themeColor,
                         ),
                         title: Text(
@@ -117,7 +135,9 @@ class _APScreenState extends State<APScreen> {
                           icon: Icon(
                             Icons.camera_alt,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            pickimage2();
+                          },
                         ),
                         minLeadingWidth: 0,
                       ),
@@ -142,12 +162,7 @@ class _APScreenState extends State<APScreen> {
                   children: [
                     InkWell(
                       onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => const AddressProof(),
-                        //   ),
-                        // );
+                        save();
                       },
                       child: Container(
                         margin: const EdgeInsets.only(
@@ -168,7 +183,7 @@ class _APScreenState extends State<APScreen> {
                           margin: const EdgeInsets.only(
                             right: 10,
                           ),
-                          child: Text(
+                          child:apicall?progress():Text(
                             "Save",
                             style: GoogleFonts.roboto(
                               textStyle: const TextStyle(
@@ -188,5 +203,33 @@ class _APScreenState extends State<APScreen> {
         ],
       ),
     );
+  }
+  void pickimage() async{
+    var image =  await ImagePicker().pickImage(source: ImageSource.gallery);
+    var p = await image.readAsBytes();
+    path  = base64Encode(p);
+    print(path);
+    setState(() {});
+
+  }
+  void pickimage2() async{
+    var image =  await ImagePicker().pickImage(source: ImageSource.gallery);
+    var p = await image.readAsBytes();
+    path2  = base64Encode(p);
+    print(path);
+    setState(() {});
+
+  }
+
+  void save() {
+    if(number.text.isEmpty||path==null||path2==null){
+      EasyLoading.showToast('Enter License number and select image',toastPosition: EasyLoadingToastPosition.top);
+    }else{
+      start();
+      Detailservices().uploadaadhaar(path,path2, number.text, authbloc.user.data.driverId)
+          .then((value){
+        stop();
+      });
+    }
   }
 }

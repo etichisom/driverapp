@@ -4,7 +4,10 @@ import 'dart:typed_data';
 
 import 'package:bullet_pro/Models/driverm.dart';
 import 'package:bullet_pro/Models/walletm.dart';
+import 'package:bullet_pro/Screens/bottom_navigation_bar_screen.dart';
 import 'package:bullet_pro/Screens/login_screen.dart';
+import 'package:bullet_pro/Screens/registration_screen.dart';
+import 'package:bullet_pro/Utils/nav.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hive/hive.dart';
@@ -18,7 +21,7 @@ class Authservice{
 
 
   Future<bool> createaccount ({String number,String
-  name,String type,String token,String fname,String lname,Uint8List image})async{
+  name,String type,String token,String fname,String lname,dynamic image})async{
     print(ktoken);
     try{
       var url = Uri.parse(baseurl+'/driver/signup');
@@ -65,12 +68,12 @@ class Authservice{
     }
   }
 
-  Future<bool> Login({String number,String password,String token})async{
+  Future<bool> Login(BuildContext context,{String number,String password,String token})async{
 
    try{
      var url = Uri.parse(baseurl+'/driver/checkdriver');
      var map = {
-       "driver_mobile":'7897773428',
+       "driver_mobile":number,
        "driver_device_token":ktoken
      };
      var data = jsonEncode(map);
@@ -85,10 +88,14 @@ class Authservice{
      print(res.body);
      if(res.statusCode==200){
        if(decode['status']==true&&decode['is_exists']==1){
+         //nav(RegistrationPage(number:number,), context);
          //EasyLoading.showSuccess(decode['message'].toString());
          return true;
-       }else{
+       }else if(decode['status']==true&&decode['is_exists']==0){
+         nav(RegistrationPage(number:number,), context);
          //EasyLoading.showError(decode['message'].toString());
+         return false;
+       }else{
          return false;
        }
      }
@@ -105,8 +112,8 @@ class Authservice{
       var url = Uri.parse(baseurl+'/driver/checkdriver');
       var map = {
         "driver_id":uid,
-        "driver_latitude":lat,
-        "driver_longitude":log
+        "driver_latitude":position.latitude,
+        "driver_longitude":position.longitude
       };
       var data = jsonEncode(map);
       var res = await post(url,

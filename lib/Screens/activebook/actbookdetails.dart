@@ -7,6 +7,7 @@ import 'package:bullet_pro/bloc/authbloc.dart';
 import 'package:bullet_pro/bloc/bookbloc.dart';
 import 'package:bullet_pro/component/text.dart';
 import 'package:bullet_pro/services/bookingservices.dart';
+import 'package:bullet_pro/services/noti.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bullet_pro/Models/rbook.dart';
@@ -17,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'actmaindetails.dart';
 
 Bookdetail book;
+var btoken ='djjddkdkkfkf';
 class Abookd extends StatefulWidget {
   String bookid;
 
@@ -27,6 +29,7 @@ class Abookd extends StatefulWidget {
 }
 
 class _BookdState extends State<Abookd> {
+  bool load = false;
   Completer<GoogleMapController> _controller = Completer();
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
@@ -50,7 +53,7 @@ class _BookdState extends State<Abookd> {
           body:book==null?Center(child: CupertinoActivityIndicator()):Stack(
             children: [
               MapPolyLineDraw(
-                mapZoom:14.4746,
+                mapZoom:5.4746,
                 apiKey:"AIzaSyC44N6yERgjg8AM_UOznKlflcEZWYE8tro",
                 firstPoint: MapPoint(double.parse(book.data.bookingPickupLatitude), double.parse(book.data.bookingPickupLongitude)),
                 secondPoint: MapPoint(double.parse(book.data.bookingsDrop.first.bookingDropLatitude), double.parse(book.data.bookingsDrop.first.bookingDropLongitude)),
@@ -78,7 +81,7 @@ class _BookdState extends State<Abookd> {
                   );
                 },
               ),
-              DraggableScrollableSheet(
+              status('accepted')==false?SizedBox():DraggableScrollableSheet(
                 initialChildSize: 0.13,
                 minChildSize: 0.13,
                 maxChildSize: 0.13,
@@ -109,14 +112,19 @@ class _BookdState extends State<Abookd> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            status('start')==false?
+                            status('accepted')?
                                 iconbutton((){
-                            bookingservices.Bookstart(book.data.bookingId.toString())
-                                 .then((value){
-                                   reset(book.data.bookingId);
-                             });
+                                  if(load==false){
+                                    load=true;
+                                    bookingservices.Bookstart(book.data.bookingId.toString())
+                                        .then((value){
+                                          load=false;
+                                      reset(book.data.bookingId);
+                                      sendnoti(btoken, "Booking Started", book.data.bookingId);
+                                    });
+                                  }
 
-                           },"Start Order",Icons.hourglass_top):
+                                  },"Start Order",Icons.hourglass_top):
                             iconbutton((){
 
                             },"Complete Order",Icons.check),
@@ -152,6 +160,7 @@ class _BookdState extends State<Abookd> {
         .then((value){
       if(value!=null){
         book=value;
+        btoken=value.data.customerDeviceToken;
         setState(() {});
       }
     });
@@ -166,6 +175,7 @@ class _BookdState extends State<Abookd> {
         .then((value){
       if(value!=null){
         book=value;
+        btoken=value.data.customerDeviceToken;
         setState(() {});
       }
     });

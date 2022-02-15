@@ -1,8 +1,13 @@
+import 'package:bullet_pro/Models/citym.dart';
 import 'package:bullet_pro/Models/regionModel.dart';
+import 'package:bullet_pro/Screens/verify_otp_screen.dart';
 import 'package:bullet_pro/Utils/color.dart';
+import 'package:bullet_pro/bloc/authbloc.dart';
+import 'package:bullet_pro/services/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:provider/provider.dart';
+Citym citym;
 class ChangeRegionScreen extends StatefulWidget {
 
 
@@ -13,28 +18,16 @@ class ChangeRegionScreen extends StatefulWidget {
 class _ChangeRegionScreenState extends State<ChangeRegionScreen> {
   double screenHeight = 0;
   double screenWidth = 0;
-
-  List<RegionModel> region = [
-    RegionModel(title: "Mumbai"),
-    RegionModel(title: "Bengluru"),
-    RegionModel(title: "Delhi/Ncr"),
-    RegionModel(title: "Hydrabad"),
-    RegionModel(title: "Chennai"),
-    RegionModel(title: "Kolkata"),
-    RegionModel(title: "Pune"),
-    RegionModel(title: "Jaipur"),
-    RegionModel(title: "Goa"),
-    RegionModel(title: "Indore"),
-    RegionModel(title: "Bhopal"),
-    RegionModel(title: "Surat"),
-    RegionModel(title: "Uttarakhand"),
-    RegionModel(title: "Uttarpradesh"),
-    RegionModel(title: "Punjab"),
-  ];
+  int stateindex = 0;
+  bool apicall =false;
+  start(){setState(() {apicall=true;});}
+  stop(){setState(() {apicall=false;});}
+  Authbloc authbloc;
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
+    authbloc=Provider.of<Authbloc>(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -56,21 +49,18 @@ class _ChangeRegionScreenState extends State<ChangeRegionScreen> {
           ),
         ),
       ),
-      body: ListView(
+      body:citym==null?Center(child: CircularProgressIndicator()):ListView(
         children: [
-          SizedBox(
-            height: screenHeight / 1.3,
-            width: screenWidth,
-            child: ListView.builder(
-              scrollDirection: Axis.vertical,
-              // physics: NeverScrollableScrollPhysics(),
-              // reverse: false,
-              shrinkWrap: true,
-              itemCount: region.length,
+          ListView.builder(
+            scrollDirection: Axis.vertical,
+            // physics: NeverScrollableScrollPhysics(),
+            // reverse: false,
+            shrinkWrap: true,
+            itemCount: citym.data.length,
 
-              itemBuilder: (context, index) => regionWidget(
-                region[index],
-              ),
+            itemBuilder: (context, index) => regionWidget(
+              citym.data[index],
+              index
             ),
           ),
           Column(
@@ -85,12 +75,13 @@ class _ChangeRegionScreenState extends State<ChangeRegionScreen> {
                   children: [
                     InkWell(
                       onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => const AddressProof(),
-                        //   ),
-                        // );
+                        start();
+                         Settings().
+                         updateregion(authbloc.user.data.driverId,
+                             citym.data[stateindex].cityId)
+                             .then((value){
+                               stop();
+                         });
                       },
                       child: Container(
                         margin: const EdgeInsets.only(
@@ -111,7 +102,7 @@ class _ChangeRegionScreenState extends State<ChangeRegionScreen> {
                           margin: const EdgeInsets.only(
                             right: 10,
                           ),
-                          child: Text(
+                          child:apicall?progress():Text(
                             "Save",
                             style: GoogleFonts.roboto(
                               textStyle: const TextStyle(
@@ -133,22 +124,35 @@ class _ChangeRegionScreenState extends State<ChangeRegionScreen> {
     );
   }
 
-  Widget regionWidget(RegionModel item) {
+  Widget regionWidget(Data item,int index) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 25,
-            vertical: 10,
-          ),
-          child: Text(
-            item.title,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
+        Row(
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(
+                horizontal: 25,
+                vertical: 10,
+              ),
+              child: Text(
+                item.cityName,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                ),
+              ),
             ),
-          ),
+            Spacer(),
+            Radio(value:index,
+                groupValue: stateindex,
+                onChanged: (v){
+              setState(() {
+                stateindex=v;
+              });
+                })
+
+          ],
         ),
         Container(
           margin: const EdgeInsets.symmetric(
@@ -161,5 +165,15 @@ class _ChangeRegionScreenState extends State<ChangeRegionScreen> {
         ),
       ],
     );
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Settings().Getcity().then((value){
+      setState(() {
+        citym=value;
+      });
+    });
   }
 }

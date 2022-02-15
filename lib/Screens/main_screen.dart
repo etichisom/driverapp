@@ -1,6 +1,6 @@
 import 'package:bullet_pro/Screens/avialable_book.dart';
 import 'package:bullet_pro/Screens/book/combook.dart';
-import 'package:bullet_pro/Screens/book/profilescreen.dart';
+import 'package:bullet_pro/Screens/profilescreen.dart';
 import 'package:bullet_pro/Screens/verify_otp_screen.dart';
 import 'package:bullet_pro/Utils/color.dart';
 import 'package:bullet_pro/bloc/authbloc.dart';
@@ -174,13 +174,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 PopupMenuItem(
                   value: 'online',
                     child: ListTile(
-                      leading: const Icon(Icons.work),
+                      leading: const Icon(Icons.work,color: Colors.green,),
                       title: const Text("I'm working"),
                     )),
                 PopupMenuItem(
                   value: 'offline',
                     child: ListTile(
-                      leading: const Icon(Icons.work_off),
+                      leading: const Icon(Icons.work_off,color: Colors.red,),
                       title: const Text("I'm not working"),
                     )),
               ],

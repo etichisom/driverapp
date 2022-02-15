@@ -27,6 +27,10 @@ class Authbloc extends ChangeNotifier{
    }
 
   }
+  setuserd(Userd userd){
+    user=userd;
+    notifyListeners();
+  }
   Future<Walletm>wallet(String uid)async{
     var data = await Authservice().wallet(uid);
     if(data!=null){

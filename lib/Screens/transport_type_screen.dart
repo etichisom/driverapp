@@ -1,6 +1,14 @@
+import 'dart:convert';
+
+import 'package:bullet_pro/Screens/verify_otp_screen.dart';
 import 'package:bullet_pro/Utils/color.dart';
+import 'package:bullet_pro/bloc/authbloc.dart';
+import 'package:bullet_pro/services/detailservices.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class TransportTypeScreen extends StatefulWidget {
 
@@ -12,8 +20,16 @@ class TransportTypeScreen extends StatefulWidget {
 class _TransportTypeScreenState extends State<TransportTypeScreen> {
   double screenHeight = 0;
   double screenWidth = 0;
+  var path;
+  var path2;
+  Authbloc authbloc;
+  bool apicall =false;
+  start(){setState(() {apicall=true;});}
+  stop(){setState(() {apicall=false;});}
+  TextEditingController number = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    authbloc=Provider.of<Authbloc>(context);
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     var value;
@@ -98,6 +114,7 @@ class _TransportTypeScreenState extends State<TransportTypeScreen> {
                 ),
                 height: 50,
                 child: TextField(
+                  controller: number,
                   decoration: InputDecoration(
                     labelText: "Driving License Number*",
                     hintText: "License Number",
@@ -115,80 +132,90 @@ class _TransportTypeScreenState extends State<TransportTypeScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Container(
-                margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
-                height: screenHeight / 16,
-                width: screenWidth / 1.1,
-                decoration: BoxDecoration(
-                    color: Colors.green.shade200,
-                    borderRadius: BorderRadius.all(Radius.circular(
-                      10,
-                    ))),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Row(
-                        children: [
-                          Radio(
-                              value: () {},
-                              groupValue: () {},
-                              onChanged: value),
-                          Text(
-                            "Driver's License photo(front)",
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          )
-                        ],
+              InkWell(
+                onTap: (){
+                   pickimage();
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
+                  height: screenHeight / 16,
+                  width: screenWidth / 1.1,
+                  decoration: BoxDecoration(
+                      color: Colors.green.shade200,
+                      borderRadius: BorderRadius.all(Radius.circular(
+                        10,
+                      ))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        child: Row(
+                          children: [
+                            Radio(
+                                value: path==null?false:true,
+                                groupValue:true,
+                                onChanged: value),
+                            Text(
+                              "Driver's License photo(front)",
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        right: 10,
+                      Container(
+                        margin: EdgeInsets.only(
+                          right: 10,
+                        ),
+                        child: Icon(
+                          Icons.camera_alt,
+                          color: Colors.grey,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.camera_alt,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
-                height: screenHeight / 16,
-                width: screenWidth / 1.1,
-                decoration: BoxDecoration(
-                    color: Colors.green.shade200,
-                    borderRadius: BorderRadius.all(Radius.circular(
-                      10,
-                    ))),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Row(
-                        children: [
-                          Radio(
-                              value: () {},
-                              groupValue: () {},
-                              onChanged: value),
-                          Text(
-                            "Driver's License photo(Back)",
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          )
-                        ],
+              InkWell(
+                onTap: (){
+                  pickimage2();
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
+                  height: screenHeight / 16,
+                  width: screenWidth / 1.1,
+                  decoration: BoxDecoration(
+                      color: Colors.green.shade200,
+                      borderRadius: BorderRadius.all(Radius.circular(
+                        10,
+                      ))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        child: Row(
+                          children: [
+                            Radio(
+                                value: path2==null?false:true,
+                                groupValue:true,
+                                onChanged: value),
+                            Text(
+                              "Driver's License photo(Back)",
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        right: 10,
+                      Container(
+                        margin: EdgeInsets.only(
+                          right: 10,
+                        ),
+                        child: Icon(
+                          Icons.camera_alt,
+                          color: Colors.grey,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.camera_alt,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               Container(
@@ -201,12 +228,7 @@ class _TransportTypeScreenState extends State<TransportTypeScreen> {
                   children: [
                     InkWell(
                       onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => const AddressProof(),
-                        //   ),
-                        // );
+                       save();
                       },
                       child: Container(
                         margin: const EdgeInsets.only(
@@ -227,70 +249,7 @@ class _TransportTypeScreenState extends State<TransportTypeScreen> {
                           margin: const EdgeInsets.only(
                             right: 10,
                           ),
-                          child: Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Add other vehicle",
-                                  style: GoogleFonts.roboto(
-                                    textStyle: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.add,
-                                  size: 15,
-                                  color: Colors.white,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                  top: 20,
-                ),
-                alignment: Alignment.bottomCenter,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => const AddressProof(),
-                        //   ),
-                        // );
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(
-                          top: 10,
-                        ),
-                        height: screenHeight / 18,
-                        width: screenWidth / 1.1,
-                        decoration: const BoxDecoration(
-                          color: themeColor,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(
-                              10,
-                            ),
-                          ),
-                        ),
-                        child: Container(
-                          alignment: Alignment.center,
-                          margin: const EdgeInsets.only(
-                            right: 10,
-                          ),
-                          child: Text(
+                          child:apicall?progress(): Text(
                             "Save",
                             style: GoogleFonts.roboto(
                               textStyle: const TextStyle(
@@ -310,5 +269,33 @@ class _TransportTypeScreenState extends State<TransportTypeScreen> {
         ],
       ),
     );
+  }
+  void pickimage() async{
+    var image =  await ImagePicker().pickImage(source: ImageSource.gallery);
+    var p = await image.readAsBytes();
+    path  = base64Encode(p);
+    print(path);
+    setState(() {});
+
+  }
+  void pickimage2() async{
+    var image =  await ImagePicker().pickImage(source: ImageSource.gallery);
+    var p = await image.readAsBytes();
+    path2  = base64Encode(p);
+    print(path);
+    setState(() {});
+
+  }
+
+  void save() {
+    if(number.text.isEmpty||path==null||path2==null){
+      EasyLoading.showToast('Enter License number and select image',toastPosition: EasyLoadingToastPosition.top);
+    }else{
+      start();
+      Detailservices().uploaddl(path,path2, number.text, authbloc.user.data.driverId)
+          .then((value){
+        stop();
+      });
+    }
   }
 }

@@ -5,6 +5,7 @@ import 'package:bullet_pro/Utils/color.dart';
 import 'package:bullet_pro/component/bookcard.dart';
 import 'package:bullet_pro/component/text.dart';
 import 'package:bullet_pro/services/bookingservices.dart';
+import 'package:bullet_pro/services/noti.dart';
 import 'package:bullet_pro/theme/apptheme.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -34,7 +35,7 @@ class _MaindetailsState extends State<Maindetails1> {
                   topRight:  Radius.circular(10)
               )
           ),
-          child: Center(child: stext('Order #567866 for Today', 14,color: Colors.white,fontWeight: FontWeight.w600)),
+          child: Center(child: stext(book.data.bookingOrderId, 14,color: Colors.white,fontWeight: FontWeight.w600)),
         ),
           Padding(
             padding: const EdgeInsets.all(20.0),
@@ -81,6 +82,7 @@ class _MaindetailsState extends State<Maindetails1> {
             bookingservices.Bookarrived(book.data.bookingId).
             then((value){
               reset(book.data.bookingId);
+              sendnoti(btoken, "Driver has arrived", book.data.bookingId);
             });
           },"Arrived",status('arrived')),
           SizedBox(height: 15,),
@@ -88,6 +90,7 @@ class _MaindetailsState extends State<Maindetails1> {
              bookingservices.Bookpickup(book.data.bookingId).
              then((value){
                reset(book.data.bookingId);
+               sendnoti(btoken, "Driver has Pick up", book.data.bookingId);
              });
           },"Pick up",status('pickup')):status('completed')?
           button((){
@@ -115,6 +118,8 @@ class _MaindetailsState extends State<Maindetails1> {
                     bookingservices.dropoff(book.data.bookingId,d.bookingDropId).
                     then((value){
                       reset(book.data.bookingId);
+                      print('fffff');
+                      sendnoti(btoken, "Drop of at ${d.bookingDropAddress}", book.data.bookingId);
                     });
                   }, 'Drop off',d.bookingDropStatus.toString().toLowerCase().contains('completed'))
                       :status('completed')?dropbutton((){

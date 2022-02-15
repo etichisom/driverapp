@@ -12,17 +12,18 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 void main()async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Directory dir = await getTemporaryDirectory();
+  Hive.init(dir.path);
+  await Hive.openBox('auth');
+  await Firebase.initializeApp();
   runApp( MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) =>Authbloc() ),
       ChangeNotifierProvider(create: (_) =>Bookbloc() ),
     ],
       child: MyApp()));
-  WidgetsFlutterBinding.ensureInitialized();
-  Directory dir = await getTemporaryDirectory();
-  Hive.init(dir.path);
-  await Hive.openBox('auth');
-  await Firebase.initializeApp();
+
 }
 
 class MyApp extends StatelessWidget {

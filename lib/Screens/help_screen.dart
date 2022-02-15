@@ -59,9 +59,9 @@ class _HelpScreenState extends State<HelpScreen> {
                     ),
                   ),
                   subtitle: Text(
-                    d.helpDescription.toString(),
-                    maxLines: 4,
-                    softWrap: true,
+                    d.helpShortDescription.toString(),
+                    //maxLines: 4,
+                    //softWrap: true,
                     style: TextStyle(
                       color: Colors.grey,
                     ),

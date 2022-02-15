@@ -1,9 +1,16 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
+import 'package:bullet_pro/Models/driverm.dart';
 import 'package:bullet_pro/Screens/welcome_screen.dart';
 import 'package:bullet_pro/Utils/color.dart';
+import 'package:bullet_pro/Utils/nav.dart';
+import 'package:bullet_pro/bloc/authbloc.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
+
+import 'bottom_navigation_bar_screen.dart';
 
 class SplashScreen extends StatefulWidget {
 
@@ -14,12 +21,13 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   double screenHeight = 0;
   double screenWidth = 0;
-
+  Box box= Hive.box('auth');
+  Authbloc authbloc;
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
-
+    authbloc=Provider.of<Authbloc>(context);
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -77,15 +85,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
+    super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => WelcomeScreen(),
-        ),
-      );
+      if(box.get('auth')==null){
+        nav(WelcomeScreen(), context,remove: true);
+      }else{
+        Map<dynamic, dynamic> p = box.get('auth');
+        Map<dynamic, dynamic> c= box.get('auth');
+        print(p.runtimeType);
+        var u = Userd.fromJson(c);
+        authbloc.setuser(u);
+        nav(MyBottomNavigatonBar(), context,remove: true);
+
+      }
     });
 
-    super.initState();
-  }
+}
 }

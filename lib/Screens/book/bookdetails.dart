@@ -6,6 +6,7 @@ import 'package:bullet_pro/Utils/nav.dart';
 import 'package:bullet_pro/bloc/authbloc.dart';
 import 'package:bullet_pro/bloc/bookbloc.dart';
 import 'package:bullet_pro/component/text.dart';
+import 'package:bullet_pro/services/noti.dart';
 import 'package:flutter/material.dart';
 import 'package:bullet_pro/Models/rbook.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -110,6 +111,7 @@ class _BookdState extends State<Bookd> {
                             EasyLoading.dismiss();
                                 load=true;
                             if(value!=null){
+                              sendnotify(value['booking_id'].toString());
                               bookbloc.getrecentbook(authbloc.user.data.driverId);
                               bookbloc.getactivebook(authbloc.user.data.driverId);
                               Navigator.pop(context,value['booking_id'].toString());
@@ -155,6 +157,16 @@ class _BookdState extends State<Bookd> {
     });
     bookbloc.getrecentbook(authbloc.user.data.driverId);
     bookbloc.getactivebook(authbloc.user.data.driverId);
+  }
+
+  void sendnotify(String value) {
+    bookingservices.getbookbid(value.toString())
+        .then((value){
+      if(value!=null){
+        sendnoti(value.data.customerDeviceToken, "Order Accepted by driver", value.toString());
+      }
+    });
+   // sendnoti(btoken, "Order Accepted by driver", value['booking_id'].toString());
   }
 
 

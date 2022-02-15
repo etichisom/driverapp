@@ -13,7 +13,9 @@ import 'package:image_picker/image_picker.dart';
 import 'login_screen.dart';
 
 class RegistrationPage extends StatefulWidget {
+String number;
 
+RegistrationPage({this.number=''});
 
   @override
   _RegistrationPageState createState() => _RegistrationPageState();
@@ -24,6 +26,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   double screenWidth = 0;
   int index = 0;
   var path;
+  var photo = "Select image";
   List jobtype = ["full_time","part_time"];
   bool apicall =false;
   start(){setState(() {apicall=true;});}
@@ -31,7 +34,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
   TextEditingController phonenumber = TextEditingController();
   TextEditingController fname = TextEditingController();
   TextEditingController lname = TextEditingController();
-  TextEditingController photo = TextEditingController();
   final key = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -302,7 +304,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   enabled: false,
                   //controller: photo,
                   decoration: InputDecoration(
-                    hintText: "Photo",
+                    hintText: photo,
                     fillColor: Colors.white,
                     filled: true,
                     border: OutlineInputBorder(
@@ -316,7 +318,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     suffixIcon: IconButton(
                       onPressed: () {},
                       icon: Icon(
-                        Icons.person_add,
+                        Icons.camera_alt,
                         color: Colors.black,
                       ),
                     ),
@@ -480,8 +482,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   void pickimage() async{
    var image =  await ImagePicker().pickImage(source: ImageSource.gallery);
-      path = await image.readAsBytes();
-      print(path);
+     var p = await image.readAsBytes();
+    path  = base64Encode(p);
+    photo="Picture selected";
+    print(path);
+    setState(() {});
 
   }
 
@@ -494,6 +499,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         number:phonenumber.text.trim() ,
         name:fname.text.trim() ,
         type: jobtype[index],
+        image: path,
         fname:fname.text.trim() ,
         lname:lname.text.trim() ,
       ).catchError((e){
@@ -514,6 +520,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    phonenumber.text=widget.number;
     FirebaseMessaging.instance.getToken().then((value){
       if(value!=null){
         ktoken=value;

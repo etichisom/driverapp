@@ -1,14 +1,22 @@
+import 'dart:convert';
+
 import 'package:bullet_pro/Models/driverd.dart';
+import 'package:bullet_pro/Models/statm.dart';
 import 'package:bullet_pro/Utils/color.dart';
 import 'package:bullet_pro/Utils/nav.dart';
 import 'package:bullet_pro/bloc/authbloc.dart';
 import 'package:bullet_pro/services/infoservice.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../login_screen.dart';
+import 'login_screen.dart';
 Driverd driverd;
+Statm statm;
+var com = '0';
+var cash = '0';
+var cashvalue = '0';
 class Profile extends StatefulWidget {
 
 
@@ -26,7 +34,8 @@ class _ProfileState extends State<Profile> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: driverd==null?CircularProgressIndicator():profileWidget(context),
+      body: driverd==null?CircularProgressIndicator():
+      profileWidget(context),
     );
   }
   @override
@@ -35,8 +44,23 @@ class _ProfileState extends State<Profile> {
     super.initState();
     Future.delayed(Duration(microseconds: 200),(){
       Infosettings().Getdetail(authbloc.user.data.driverId).then((value){
+        if(mounted){
+          setState(() {
+            driverd=value;
+          });
+        }
+      });
+      Infosettings().getstat(authbloc.user.data.driverId)
+          .then((value){
         setState(() {
-          driverd=value;
+          if(value!=null){
+            statm=value;
+            com=value.data.completeBooking.toString();
+            cash=value.data.cashlessCollection.toString();
+            cashvalue=value.data.totalBalance.toString();
+
+          }
+          //notim=value;
         });
       });
     });
@@ -79,8 +103,8 @@ class _ProfileState extends State<Profile> {
                               ),
                             ),
                             image: DecorationImage(
-                              image: AssetImage(
-                                "assets/profile.jpg",
+                              image: NetworkImage(
+                                d.driverImage
                                 // d.driverImage.toString(),
                               ),
                               fit: BoxFit.cover,
@@ -171,7 +195,7 @@ class _ProfileState extends State<Profile> {
                                     ),
                                   ),
                                   Text(
-                                    "402",
+                                    com,
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
@@ -242,7 +266,7 @@ class _ProfileState extends State<Profile> {
                                     ),
                                   ),
                                   Text(
-                                    "4.2*",
+                                    "0.0",
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
@@ -470,4 +494,6 @@ class _ProfileState extends State<Profile> {
       ],
     );
   }
+
+
 }

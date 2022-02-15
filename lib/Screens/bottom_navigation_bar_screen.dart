@@ -1,9 +1,11 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bullet_pro/Screens/help_screen.dart';
 import 'package:bullet_pro/Screens/main_screen.dart';
 import 'package:bullet_pro/Screens/notification_screen.dart';
 import 'package:bullet_pro/Screens/account_screen.dart';
 import 'package:bullet_pro/Screens/user_chat_screen.dart';
 import 'package:bullet_pro/Utils/color.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 Position position = Position(longitude:23123213123 , latitude:3131313213 ,
@@ -43,8 +45,8 @@ class _MyBottomNavigatonBarState extends State<MyBottomNavigatonBar> {
         focusColor: Colors.red,
         backgroundColor: Colors.red,
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => MainScreen()));
+          //intitnoti();
+          Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
         },
         child: Icon(
           Icons.close,
@@ -171,6 +173,7 @@ class _MyBottomNavigatonBarState extends State<MyBottomNavigatonBar> {
     // TODO: implement initState
     super.initState();
    locate();
+   intitnoti();
   }
 
   void locate() async{
@@ -185,5 +188,24 @@ class _MyBottomNavigatonBarState extends State<MyBottomNavigatonBar> {
       position=event;
       print(event.latitude);
     });
+  }
+
+  void intitnoti() {
+    print('bjb');
+    AwesomeNotifications().initialize(
+        'resource://drawable/res_app_icon',
+        [
+          // Your notification channels go here
+        ]
+    );
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onMessage.listen((event) {
+      _firebaseMessagingBackgroundHandler(event);
+    });
+  }
+  Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+    print("Handling a background messagesss: ${message.messageId}");
+    AwesomeNotifications().createNotificationFromJsonData(message.data);
+
   }
 }

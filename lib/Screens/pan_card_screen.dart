@@ -1,6 +1,14 @@
+import 'package:bullet_pro/Screens/verify_otp_screen.dart';
 import 'package:bullet_pro/Utils/color.dart';
+import 'package:bullet_pro/bloc/authbloc.dart';
+import 'package:bullet_pro/services/detailservices.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+
+import 'package:provider/provider.dart';
 
 class PanCardScreen extends StatefulWidget {
 
@@ -12,8 +20,15 @@ class PanCardScreen extends StatefulWidget {
 class _PanCardScreenState extends State<PanCardScreen> {
   double screenHeight = 0;
   double screenWidth = 0;
+  Authbloc authbloc;
+  var path;
+  bool apicall =false;
+  start(){setState(() {apicall=true;});}
+  stop(){setState(() {apicall=false;});}
+  TextEditingController number = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    authbloc=Provider.of<Authbloc>(context);
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     var value;
@@ -49,6 +64,7 @@ class _PanCardScreenState extends State<PanCardScreen> {
                 ),
                 height: 50,
                 child: TextField(
+                  controller: number,
                   decoration: InputDecoration(
                     labelText: "Pan Number*",
                     hintText: "DSXXXX",
@@ -60,46 +76,52 @@ class _PanCardScreenState extends State<PanCardScreen> {
                     ),
                   ),
                 ),
+
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
-                    height: screenHeight / 16,
-                    width: screenWidth / 1.1,
-                    decoration: BoxDecoration(
-                        color: Colors.green.shade200,
-                        borderRadius: BorderRadius.all(Radius.circular(
-                          10,
-                        ))),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Row(
-                            children: [
-                              Radio(
-                                  value: () {},
-                                  groupValue: () {},
-                                  onChanged: value),
-                              Text(
-                                "Your PAN card photo",
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              )
-                            ],
+                  InkWell(
+                    onTap: (){
+                      pickimage();
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
+                      height: screenHeight / 16,
+                      width: screenWidth / 1.1,
+                      decoration: BoxDecoration(
+                          color: Colors.green.shade200,
+                          borderRadius: BorderRadius.all(Radius.circular(
+                            10,
+                          ))),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            child: Row(
+                              children: [
+                                Radio(
+                                    value: path==null?false:true,
+                                    groupValue:true,
+                                    onChanged: value),
+                                Text(
+                                  "Your PAN card photo",
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(
-                            right: 10,
+                          Container(
+                            margin: EdgeInsets.only(
+                              right: 10,
+                            ),
+                            child: Icon(
+                              Icons.camera_alt,
+                              color: Colors.grey,
+                            ),
                           ),
-                          child: Icon(
-                            Icons.camera_alt,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   Container(
@@ -124,12 +146,7 @@ class _PanCardScreenState extends State<PanCardScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => const AddressProof(),
-                            //   ),
-                            // );
+                          save();
                           },
                           child: Container(
                             margin: const EdgeInsets.only(
@@ -150,7 +167,7 @@ class _PanCardScreenState extends State<PanCardScreen> {
                               margin: const EdgeInsets.only(
                                 right: 10,
                               ),
-                              child: Text(
+                              child:apicall?progress():Text(
                                 "Save",
                                 style: GoogleFonts.roboto(
                                   textStyle: const TextStyle(
@@ -172,5 +189,24 @@ class _PanCardScreenState extends State<PanCardScreen> {
         ],
       ),
     );
+  }
+  void pickimage() async{
+    var image =  await ImagePicker().pickImage(source: ImageSource.gallery);
+   var p = await image.readAsBytes();
+    path  = base64Encode(p);
+    print(path);
+  setState(() {});
+  }
+
+  void save() {
+    if(number.text.isEmpty||path==null){
+      EasyLoading.showToast('Enter number and select image',toastPosition: EasyLoadingToastPosition.top);
+    }else{
+      start();
+      Detailservices().uploadpan(path, number.text, authbloc.user.data.driverId)
+          .then((value){
+           stop();
+      });
+    }
   }
 }
