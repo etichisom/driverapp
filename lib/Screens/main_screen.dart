@@ -1,3 +1,4 @@
+
 import 'package:bullet_pro/Screens/avialable_book.dart';
 import 'package:bullet_pro/Screens/book/combook.dart';
 import 'package:bullet_pro/Screens/profilescreen.dart';
@@ -7,8 +8,6 @@ import 'package:bullet_pro/bloc/authbloc.dart';
 import 'package:bullet_pro/bloc/bookbloc.dart';
 import 'package:bullet_pro/services/infoservice.dart';
 import 'package:bullet_pro/services/locationservices.dart';
-import 'package:bullet_pro/theme/apptheme.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:popup_menu/popup_menu.dart';
@@ -42,22 +41,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     _controller = TabController(length: 3, vsync: this);
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(milliseconds: 500),(){
-      //FirebaseMessaging.;
-      FirebaseMessaging.onMessage.listen((event) {
-        bookbloc.getactivebook(authbloc.user.data.driverId);
-        bookbloc.getrecentbook(authbloc.user.data.driverId);
-        print(event);
-      });
-      Infosettings().Getdetail(authbloc.user.data.driverId).
-      then((value) {
-        if(value!=null){
-          setState(() {
-            driverd=value;
-          });
-        }
-      });
-    });
 
   }
 
@@ -152,7 +135,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       child: Scaffold(
         appBar: AppBar(
           actions: [
-           driverd==null?SizedBox():PopupMenuButton(
+           true==true?SizedBox():PopupMenuButton(
               icon: Icon(Icons.online_prediction),
               offset: Offset(0, 50),
               shape:  TooltipShape(),
@@ -175,13 +158,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   value: 'online',
                     child: ListTile(
                       leading: const Icon(Icons.work,color: Colors.green,),
-                      title: const Text("I'm working"),
+                      title: const Text("ON"),
                     )),
                 PopupMenuItem(
                   value: 'offline',
                     child: ListTile(
                       leading: const Icon(Icons.work_off,color: Colors.red,),
-                      title: const Text("I'm not working"),
+                      title: const Text("OFF"),
                     )),
               ],
             ),
@@ -207,9 +190,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           ),
         ),
         body: TabBarView(children: [
-         driverd==null?Availbe():driverd.data.driverLoginStatus.toString()=='0'?
+          authbloc.driverd==null?Availbe():authbloc.driverd.data.driverLoginStatus.toString()=='0'?
           avialbleWidget():Availbe(),
-          driverd==null?Activebooking():driverd.data.driverLoginStatus.toString()=='0'?
+          authbloc.driverd==null?Activebooking():authbloc.driverd.data.driverLoginStatus.toString()=='0'?
           avialbleWidget():Activebooking(),
           Combooking(),
         ]),
@@ -270,6 +253,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       then((value) {
                         stop();
                         if(value!=null){
+                         authbloc.setd(value);
                           setState(() {
                             driverd=value;
                           });

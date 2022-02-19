@@ -62,7 +62,7 @@ class _AccountScreenState extends State<AccountScreen>
       action: EmailScreen(),
     ),
     SettingsModel(
-      title: "Bank Detial",
+      title: "Bank Detail",
       icon: Icons.menu_book,
       action: BankDetailsScreen(),
     ),
@@ -79,7 +79,7 @@ class _AccountScreenState extends State<AccountScreen>
   double screenWidth = 0;
   @override
   void initState() {
-    _controller = TabController(length: 6, vsync: this);
+    _controller = TabController(length: 4, vsync: this);
     // TODO: implement initState
     super.initState();
   }
@@ -100,26 +100,11 @@ class _AccountScreenState extends State<AccountScreen>
           child: Container(
             alignment: Alignment.center,
             child: Text(
-              "YOU TODAY",
-            ),
-          ),
-        ),
-        Tab(
-          child: Container(
-            alignment: Alignment.center,
-            child: Text(
               "PROFILE",
             ),
           ),
         ),
-        Tab(
-          child: Container(
-            alignment: Alignment.center,
-            child: Text(
-              "IDENTITY CARD",
-            ),
-          ),
-        ),
+        //Tab(child: Container(alignment: Alignment.center, child: Text("IDENTITY CARD",)),),
         Tab(
           child: Container(
             alignment: Alignment.center,
@@ -149,7 +134,7 @@ class _AccountScreenState extends State<AccountScreen>
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return DefaultTabController(
-      length: 6,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: themeColor,
@@ -176,13 +161,12 @@ class _AccountScreenState extends State<AccountScreen>
         body: TabBarView(
           children: [
             // -------------YouToday Widget --------------------------------
-            Todayphoto(),
 
             // -------------Profile Widget --------------------------------
             Profile(),
 
             // -------------Identity  Widget --------------------------------
-            Identity(),
+            //Identity(),
 
             // -------------Settings Widget --------------------------------
 

@@ -1,13 +1,21 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
+
 import 'package:bullet_pro/Screens/help_screen.dart';
 import 'package:bullet_pro/Screens/main_screen.dart';
 import 'package:bullet_pro/Screens/notification_screen.dart';
 import 'package:bullet_pro/Screens/account_screen.dart';
+import 'package:bullet_pro/Screens/profilescreen.dart';
 import 'package:bullet_pro/Screens/user_chat_screen.dart';
 import 'package:bullet_pro/Utils/color.dart';
+import 'package:bullet_pro/bloc/authbloc.dart';
+import 'package:bullet_pro/bloc/bookbloc.dart';
+import 'package:bullet_pro/services/infoservice.dart';
+import 'package:bullet_pro/services/locationservices.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
+
+import 'chat/messageus.dart';
 Position position = Position(longitude:23123213123 , latitude:3131313213 ,
 accuracy:1 ,altitude:1 ,speed:1,speedAccuracy:1 ,heading:1 ,timestamp:DateTime.now()  );
 class MyBottomNavigatonBar extends StatefulWidget {
@@ -31,25 +39,53 @@ class _MyBottomNavigatonBarState extends State<MyBottomNavigatonBar> {
       child: Text("data"),
     ),
   ];
-
+  Bookbloc bookbloc;
+  Authbloc authbloc;
   final PageStorageBucket bucket = PageStorageBucket();
   Widget currentScreen = MainScreen();
   @override
   Widget build(BuildContext context) {
+    authbloc=Provider.of<Authbloc>(context);
+    bookbloc = Provider.of<Bookbloc>(context);
     return Scaffold(
       body: PageStorage(
         child: currentScreen,
         bucket: bucket,
       ),
       floatingActionButton: FloatingActionButton(
-        focusColor: Colors.red,
-        backgroundColor: Colors.red,
+        focusColor: authbloc.driverd==null?Colors.green:authbloc.driverd.data.driverLoginStatus=="0"?Colors.green:Colors.green,
+        backgroundColor: authbloc.driverd==null?Colors.red:authbloc.driverd.data.driverLoginStatus=="0"?Colors.red:Colors.green,
         onPressed: () {
           //intitnoti();
-          Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
+          if(currentTab==7){
+            print(authbloc.driverd.data.driverLoginStatus);
+            var c= 'online';
+            if(authbloc.driverd.data.driverLoginStatus=="1"){
+              c='offline';
+            }
+            Locationservices().updatestatus(authbloc.user.data.driverId, c)
+                .then((value){
+              Infosettings().Getdetail(authbloc.user.data.driverId).
+              then((value) {
+                if(value!=null){
+                  print(c);
+                  print(value.data.driverLoginStatus);
+                  setState(() {
+                    driverd=value;
+                    authbloc.setd(value);
+                  });
+                }
+              });
+            });
+          }
+          setState(() {
+            currentScreen = MainScreen();0
+            currentTab = 7;
+          });
+         // Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
         },
         child: Icon(
-          Icons.close,
+          driverd==null?Icons.close:driverd.data.driverLoginStatus=="0"?Icons.close:Icons.check,
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -67,7 +103,7 @@ class _MyBottomNavigatonBarState extends State<MyBottomNavigatonBar> {
                   MaterialButton(
                     onPressed: () {
                       setState(() {
-                        currentScreen = UserChat();
+                        currentScreen = Messegus();
                         currentTab = 1;
                       });
                     },
@@ -174,6 +210,24 @@ class _MyBottomNavigatonBarState extends State<MyBottomNavigatonBar> {
     super.initState();
    locate();
    intitnoti();
+    Future.delayed(Duration(milliseconds: 500),(){
+      //FirebaseMessaging.;
+      FirebaseMessaging.onMessage.listen((event) {
+        bookbloc.getactivebook(authbloc.user.data.driverId);
+        bookbloc.getrecentbook(authbloc.user.data.driverId);
+        print(event);
+      });
+      Infosettings().Getdetail(authbloc.user.data.driverId).
+      then((value) {
+        if(value!=null){
+          setState(() {
+            driverd=value;
+            authbloc.setd(value);
+          });
+        }
+      });
+    });
+
   }
 
   void locate() async{
@@ -192,20 +246,15 @@ class _MyBottomNavigatonBarState extends State<MyBottomNavigatonBar> {
 
   void intitnoti() {
     print('bjb');
-    AwesomeNotifications().initialize(
-        'resource://drawable/res_app_icon',
-        [
-          // Your notification channels go here
-        ]
-    );
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+   // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     FirebaseMessaging.onMessage.listen((event) {
-      _firebaseMessagingBackgroundHandler(event);
+      //_firebaseMessagingBackgroundHandler(event);
+
     });
   }
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     print("Handling a background messagesss: ${message.messageId}");
-    AwesomeNotifications().createNotificationFromJsonData(message.data);
+    //AwesomeNotifications().createNotificationFromJsonData(message.data);
 
   }
 }

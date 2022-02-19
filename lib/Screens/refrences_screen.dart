@@ -211,7 +211,8 @@ class _RefrencesScreenState extends State<RefrencesScreen> {
       TextEditingController number,
       TextEditingController dates,
       TextEditingController times) {
-
+dates.text='123457788';
+times.text='123457788';
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Column(
@@ -262,49 +263,7 @@ class _RefrencesScreenState extends State<RefrencesScreen> {
             ),
           ),
           SizedBox(height:10,),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  child: TextFormField(
-                    controller: dates,
-                    keyboardType: TextInputType.datetime,
-                    validator: validate,
-                    decoration: InputDecoration(
-                      labelText: "date*",
-                      hintText: " Name",
-                      border: new OutlineInputBorder(
-                        borderSide: new BorderSide(
-                          color: textColor,
-                        ),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width:10,),
-              Expanded(
-                child: Container(
-                  child: TextFormField(
-                    controller: times,
-                    validator: validate,
-                    keyboardType: TextInputType.datetime,
-                    decoration: InputDecoration(
-                      labelText: "Time*",
-                      hintText: " Name",
-                      border: new OutlineInputBorder(
-                        borderSide: new BorderSide(
-                          color: textColor,
-                        ),
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+
         ],
       ),
     );

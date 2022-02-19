@@ -2,18 +2,13 @@ class Userd {
   bool status;
   String message;
   Data data;
-  int isDocument;
-  int isProfile;
 
-  Userd(
-      {this.status, this.message, this.data, this.isDocument, this.isProfile});
+  Userd({this.status, this.message, this.data});
 
   Userd.fromJson(Map<dynamic, dynamic> json) {
     status = json['status'];
     message = json['message'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
-    isDocument = json['is_document'];
-    isProfile = json['is_profile'];
   }
 
   Map<dynamic, dynamic> toJson() {
@@ -23,8 +18,6 @@ class Userd {
     if (this.data != null) {
       data['data'] = this.data.toJson();
     }
-    data['is_document'] = this.isDocument;
-    data['is_profile'] = this.isProfile;
     return data;
   }
 }
@@ -32,31 +25,34 @@ class Userd {
 class Data {
   String driverId;
   String driverFullName;
-  dynamic driverUsername;
-  dynamic driverFirstName;
-  dynamic driverLastName;
-  dynamic driverGender;
-  dynamic driverDob;
+  var driverUsername;
+  String driverFirstName;
+  String driverLastName;
+  var driverGender;
+  var driverDob;
   String driverMobile;
   String driverEmail;
-  dynamic driverPassword;
+  var driverPassword;
   String driverImage;
-  dynamic driverDescription;
+  var driverDescription;
   String driverStatus;
-  dynamic driverDeviceId;
-  dynamic driverDeviceName;
-  dynamic driverDeviceType;
+  var driverDeviceId;
+  var driverDeviceName;
+  var driverDeviceType;
   String driverDeviceToken;
-  dynamic driverCreateAt;
+  var driverCreateAt;
   String driverUpdateAt;
   String driverVerified;
   String driverOtp;
-  dynamic driverReferral;
+  var driverReferral;
   String driverReferralBy;
   String driverLoginStatus;
   String driverIsDisable;
   String driverLatitude;
   String driverLongitude;
+  var driverRegion;
+  var driverEmployeeType;
+  String driverReviewsPoints;
 
   Data(
       {this.driverId,
@@ -85,7 +81,10 @@ class Data {
         this.driverLoginStatus,
         this.driverIsDisable,
         this.driverLatitude,
-        this.driverLongitude});
+        this.driverLongitude,
+        this.driverRegion,
+        this.driverEmployeeType,
+        this.driverReviewsPoints});
 
   Data.fromJson(Map<dynamic, dynamic> json) {
     driverId = json['driver_id'];
@@ -115,6 +114,9 @@ class Data {
     driverIsDisable = json['driver_is_disable'];
     driverLatitude = json['driver_latitude'];
     driverLongitude = json['driver_longitude'];
+    driverRegion = json['driver_region'];
+    driverEmployeeType = json['driver_employee_type'];
+    driverReviewsPoints = json['driver_reviews_points'];
   }
 
   Map<dynamic, dynamic> toJson() {
@@ -146,6 +148,9 @@ class Data {
     data['driver_is_disable'] = this.driverIsDisable;
     data['driver_latitude'] = this.driverLatitude;
     data['driver_longitude'] = this.driverLongitude;
+    data['driver_region'] = this.driverRegion;
+    data['driver_employee_type'] = this.driverEmployeeType;
+    data['driver_reviews_points'] = this.driverReviewsPoints;
     return data;
   }
 }

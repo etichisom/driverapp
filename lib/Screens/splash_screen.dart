@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
+import 'package:bullet_pro/Models/driverd.dart';
 import 'package:bullet_pro/Models/driverm.dart';
 import 'package:bullet_pro/Screens/welcome_screen.dart';
 import 'package:bullet_pro/Utils/color.dart';
@@ -32,50 +33,29 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Spacer(),
+          Image.asset('assets/bulletdriver .png'),
+          Spacer(),
           Container(
-            height: screenHeight / 2,
-            width: screenWidth,
-            child: Image.asset("assets/Motorbike-1.png"),
-          ),
-          Text(
-            "We Deliverd Your Trust",
-            style: GoogleFonts.frankRuhlLibre(
-              textStyle: const TextStyle(
-                fontSize: 15,
-                color: textColor,
-                fontWeight: FontWeight.bold,
+            height: screenHeight / 15,
+            width: screenWidth / 6,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  "assets/indianFlag.png",
+                ),
               ),
             ),
           ),
           Container(
-            alignment: Alignment.bottomCenter,
-            height: screenHeight / 3,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  height: screenHeight / 15,
-                  width: screenWidth / 6,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(
-                        "assets/indianFlag.png",
-                      ),
-                    ),
-                  ),
+            child: Text(
+              "We are Indian",
+              style: GoogleFonts.lato(
+                textStyle: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
                 ),
-                Container(
-                  child: Text(
-                    "We are Indian",
-                    style: GoogleFonts.greatVibes(
-                      textStyle: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ],
@@ -88,13 +68,14 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
       if(box.get('auth')==null){
-        nav(WelcomeScreen(), context,remove: true);
+       nav(WelcomeScreen(), context,remove: true);
       }else{
         Map<dynamic, dynamic> p = box.get('auth');
         Map<dynamic, dynamic> c= box.get('auth');
         print(p.runtimeType);
         var u = Userd.fromJson(c);
         authbloc.setuser(u);
+        authbloc.setd(Driverd.fromJson(p));
         nav(MyBottomNavigatonBar(), context,remove: true);
 
       }

@@ -237,64 +237,7 @@ class _StatState extends State<Stat> {
               ],
             ),
           ),
-          Container(
-            margin: const EdgeInsets.symmetric(
-              // horizontal: 10,
-              vertical: 10,
-            ),
-            height: screenHeight / 18,
-            width: screenWidth / 1.1,
-            color: themeColor,
-            child: Container(
-              margin: const EdgeInsets.symmetric(
-                horizontal: 10,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Points",
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                  Text(
-                    "₹00.00 from bullet",
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => PointsScreen()));
-            },
-            child: Container(
-              alignment: Alignment.center,
-              height: screenHeight / 18,
-              width: screenWidth / 1.1,
-              decoration: BoxDecoration(
-                color: themeColor,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(
-                    10,
-                  ),
-                ),
-              ),
-              child: Text(
-                "Show",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
+
           Container(
             alignment: Alignment.centerLeft,
             margin: const EdgeInsets.symmetric(

@@ -92,7 +92,17 @@ class _ProfileState extends State<Profile> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
+                        d.driverImage==null?Container(
+                          width: screenWidth / 5,
+                          height: screenHeight / 11,
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(
+                                100,
+                              ),
+                            ),)
+                        ):Container(
                           width: screenWidth / 5,
                           height: screenHeight / 11,
                           decoration: BoxDecoration(
@@ -304,67 +314,6 @@ class _ProfileState extends State<Profile> {
                   ),
                 ),
               ],
-            ),
-            Container(
-              margin: const EdgeInsets.only(
-                left: 20,
-                right: 10,
-                top: 30,
-              ),
-              child: Row(children: [
-                Icon(
-                  Icons.help,
-                  color: Colors.red,
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                  ),
-                  child: Text(
-                    "Late Orders:1 of last 5",
-                    style: GoogleFonts.roboto(
-                      textStyle: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-                ),
-              ]),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(
-                horizontal: 30,
-              ),
-              child: Divider(
-                color: Colors.grey,
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(
-                left: 20,
-                top: 5,
-              ),
-              child: Row(children: [
-                Icon(
-                  Icons.help,
-                  color: Colors.red,
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                  ),
-                  child: Text(
-                    "Check AutoStart Settings to make sure will \n receive all notifications",
-                    style: GoogleFonts.roboto(
-                      textStyle: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-                ),
-              ]),
             ),
             Container(
               alignment: Alignment.center,

@@ -5,14 +5,14 @@ class Driverd {
 
   Driverd({this.status, this.message, this.data});
 
-  Driverd.fromJson(Map<String, dynamic> json) {
+  Driverd.fromJson(Map<dynamic, dynamic> json) {
     status = json['status'];
     message = json['message'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['status'] = this.status;
     data['message'] = this.message;
     if (this.data != null) {
@@ -52,6 +52,7 @@ class Data {
   String driverLongitude;
   var driverRegion;
   var driverEmployeeType;
+  String driverReviewsPoints;
 
   Data(
       {this.driverId,
@@ -82,9 +83,10 @@ class Data {
         this.driverLatitude,
         this.driverLongitude,
         this.driverRegion,
-        this.driverEmployeeType});
+        this.driverEmployeeType,
+        this.driverReviewsPoints});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  Data.fromJson(Map<dynamic, dynamic> json) {
     driverId = json['driver_id'];
     driverFullName = json['driver_full_name'];
     driverUsername = json['driver_username'];
@@ -114,10 +116,11 @@ class Data {
     driverLongitude = json['driver_longitude'];
     driverRegion = json['driver_region'];
     driverEmployeeType = json['driver_employee_type'];
+    driverReviewsPoints = json['driver_reviews_points'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
     data['driver_id'] = this.driverId;
     data['driver_full_name'] = this.driverFullName;
     data['driver_username'] = this.driverUsername;
@@ -147,6 +150,7 @@ class Data {
     data['driver_longitude'] = this.driverLongitude;
     data['driver_region'] = this.driverRegion;
     data['driver_employee_type'] = this.driverEmployeeType;
+    data['driver_reviews_points'] = this.driverReviewsPoints;
     return data;
   }
 }
